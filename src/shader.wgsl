@@ -1,22 +1,18 @@
-// Vertex shader
-
-struct VertexOutput {
-    @builtin(position) clip_position: vec4<f32>,
-};
+struct VsOut {
+    @builtin(position) pos: vec4f,
+    @location(0) uv: vec2f,
+}
 
 @vertex
-fn vs_main(
-    @builtin(vertex_index) in_vertex_index: u32,
-) -> VertexOutput {
-    var out: VertexOutput;
-    let x = f32(1 - i32(in_vertex_index)) * 0.5;
-    let y = f32(i32(in_vertex_index & 1u) * 2 - 1) * 0.5;
-    out.clip_position = vec4<f32>(x, y, 0.0, 1.0);
+fn vs_main(@builtin(vertex_index) i: u32) -> VsOut {
+    var p = array(vec2f(-1.0, -1.0), vec2f(3.0, -1.0), vec2f(-1.0, 3.0));
+    var out: VsOut;
+    out.pos = vec4f(p[i], 0.0, 1.0);
+    out.uv = p[i] * 0.5 + vec2f(0.5);
     return out;
 }
 
-// Fragment shader
 @fragment
-fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
-    return vec4<f32>(0.3, 0.2, 0.1, 1.0);
+fn fs_main(in: VsOut) -> @location(0) vec4f {
+    return vec4f(in.uv.x, in.uv.y, 0.0, 1.0);
 }
